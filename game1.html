@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe Game</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 4px;
+            margin: 20px auto;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            font-size: 2em;
+            border: 2px solid #333;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        #message {
+            font-size: 1.2em;
+            margin-top: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tic-Tac-Toe Game</h1>
+    <div id="board"></div>
+    <div id="message"></div>
+
+    <script>
+        const board = document.getElementById('board');
+        const message = document.getElementById('message');
+        let currentPlayer = 'X';
+        let gameBoard = ['', '', '', '', '', '', '', '', ''];
+        let gameActive = true;
+
+        function createBoard() {
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.setAttribute('data-index', i);
+                cell.addEventListener('click', () => makeMove(i));
+                board.appendChild(cell);
+            }
+        }
+
+        function makeMove(index) {
+            if (gameBoard[index] === '' && gameActive) {
+                gameBoard[index] = currentPlayer;
+                renderBoard();
+                if (checkWin()) {
+                    gameActive = false;
+                    displayMessage(`${currentPlayer} wins!`);
+                } else if (gameBoard.every(cell => cell !== '')) {
+                    gameActive = false;
+                    displayMessage("It's a draw!");
+                } else {
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                }
+            }
+        }
+
+        function renderBoard() {
+            for (let i = 0; i < 9; i++) {
+                const cell = document.querySelector(`.cell[data-index='${i}']`);
+                cell.textContent = gameBoard[i];
+            }
+        }
+
+        function checkWin() {
+            const winConditions = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+
+            return winConditions.some(condition =>
+                condition.every(index => gameBoard[index] === currentPlayer)
+            );
+        }
+
+        function displayMessage(msg) {
+            message.textContent = msg;
+        }
+
+        createBoard();
+    </script>
+</body>
+</html>
